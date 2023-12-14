@@ -1,0 +1,111 @@
+#include <iostream>
+
+// Node structure for doubly linked list
+struct Node {
+    int data;
+    Node* prev;
+    Node* next;
+    Node(int value) : data(value), prev(nullptr), next(nullptr) {}
+};
+
+// Function to insert a node at the beginning of the doubly linked list
+void insertBegin(Node*& head, int value) {
+    Node* newNode = new Node(value);
+    if (head) {
+        newNode->next = head;
+        head->prev = newNode;
+    }
+    head = newNode;
+}
+
+// Function to insert a node at the end of the doubly linked list
+void insertEnd(Node*& head, int value) {
+    Node* newNode = new Node(value);
+    if (!head) {
+        head = newNode;
+    } else {
+        Node* current = head;
+        while (current->next) {
+            current = current->next;
+        }
+        current->next = newNode;
+        newNode->prev = current;
+    }
+}
+
+// Function to remove the node at the beginning of the doubly linked list
+void removeBegin(Node*& head) {
+    if (head) {
+        Node* temp = head;
+        head = head->next;
+        if (head) {
+            head->prev = nullptr;
+        }
+        delete temp;
+    }
+}
+
+// Function to remove the node at the end of the doubly linked list
+void removeEnd(Node*& head) {
+    if (head) {
+        Node* current = head;
+        while (current->next) {
+            current = current->next;
+        }
+
+        if (current->prev) {
+            current->prev->next = nullptr;
+        } else {
+            head = nullptr;
+        }
+
+        delete current;
+    }
+}
+
+// Function to display the elements of the doubly linked list
+void displayList(Node* head) {
+    while (head) {
+        std::cout << head->data << " ";
+        head = head->next;
+    }
+    std::cout << std::endl;
+}
+
+// Main function for testing
+int main() {
+    Node* head = nullptr;
+
+    // Insert elements at the beginning
+    insertBegin(head, 3);
+    insertBegin(head, 2);
+    insertBegin(head, 1);
+
+    // Display the list after insertion at the beginning
+    std::cout << "List after insertion at the beginning: ";
+    displayList(head);
+
+    // Insert elements at the end
+    insertEnd(head, 4);
+    insertEnd(head, 5);
+
+    // Display the list after insertion at the end
+    std::cout << "List after insertion at the end: ";
+    displayList(head);
+
+    // Remove the node at the beginning
+    removeBegin(head);
+
+    // Display the list after removal from the beginning
+    std::cout << "List after removal from the beginning: ";
+    displayList(head);
+
+    // Remove the node at the end
+    removeEnd(head);
+
+    // Display the list after removal from the end
+    std::cout << "List after removal from the end: ";
+    displayList(head);
+
+    return 0;
+}
