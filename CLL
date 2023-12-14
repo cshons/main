@@ -1,0 +1,141 @@
+#include <iostream>
+
+// Node class to represent elements in the circular linked list
+class Node {
+public:
+    int data;
+    Node* next;
+
+    // Constructor
+    Node(int value) : data(value), next(nullptr) {}
+};
+
+// CircularLinkedList class
+class CircularLinkedList {
+private:
+    Node* head;
+
+public:
+    // Constructor
+    CircularLinkedList() : head(nullptr) {}
+
+    // Function to insert a new element at the end of the circular list
+    void insert(int value) {
+        Node* newNode = new Node(value);
+
+        if (!head) {
+            head = newNode;
+            newNode->next = head;
+        } else {
+            Node* temp = head;
+            while (temp->next != head) {
+                temp = temp->next;
+            }
+            temp->next = newNode;
+            newNode->next = head;
+        }
+    }
+
+    // Function to remove an element from the circular list
+    void remove(int value) {
+        if (!head) {
+            return;
+        }
+
+        Node* current = head;
+        Node* previous = nullptr;
+
+        // Find the node to be deleted
+        while (current->data != value && current->next != head) {
+            previous = current;
+            current = current->next;
+        }
+
+        // If the node is found
+        if (current->data == value) {
+            // If it's the only node in the list
+            if (current->next == head) {
+                head = nullptr;
+            } else {
+                // If it's not the only node
+                if (previous) {
+                    previous->next = current->next;
+                } else {
+                    // If it's the first node
+                    Node* temp = head;
+                    while (temp->next != head) {
+                        temp = temp->next;
+                    }
+                    head = head->next;
+                    temp->next = head;
+                }
+            }
+
+            delete current;
+        }
+    }
+
+    // Function to search for an element in the circular list
+    bool search(int value) {
+        if (!head) {
+            return false;
+        }
+
+        Node* current = head;
+
+        do {
+            if (current->data == value) {
+                return true;
+            }
+            current = current->next;
+        } while (current != head);
+
+        return false;
+    }
+
+    // Function to display the elements in the circular list
+    void display() {
+        if (!head) {
+            return;
+        }
+
+        Node* current = head;
+
+        do {
+            std::cout << current->data << " ";
+            current = current->next;
+        } while (current != head);
+
+        std::cout << std::endl;
+    }
+};
+
+int main() {
+    CircularLinkedList myCircularList;
+
+    // Insert elements
+    myCircularList.insert(1);
+    myCircularList.insert(2);
+    myCircularList.insert(3);
+
+    // Display the circular list
+    std::cout << "Original Circular List: ";
+    myCircularList.display();
+
+    // Search for an element
+    int searchValue = 2;
+    if (myCircularList.search(searchValue)) {
+        std::cout << searchValue << " is found in the circular list.\n";
+    } else {
+        std::cout << searchValue << " is not found in the circular list.\n";
+    }
+
+    // Remove an element
+    myCircularList.remove(2);
+
+    // Display the updated circular list
+    std::cout << "Updated Circular List: ";
+    myCircularList.display();
+
+    return 0;
+}
