@@ -1,0 +1,85 @@
+#include <iostream>
+#include <stack>
+#include <cctype>
+#include <sstream>
+
+int evaluatePostfix(const std::string& expression) {
+    std::stack<int> stack;
+    std::istringstream iss(expression);
+
+    while (iss >> std::ws) {
+        if (isdigit(iss.peek())) {
+            int num;
+            iss >> num;
+            stack.push(num);
+        } else {
+            char op = iss.get();
+            int operand2 = stack.top(); stack.pop();
+            int operand1 = stack.top(); stack.pop();
+
+            switch (op) {
+                case '+': stack.push(operand1 + operand2); break;
+                case '-': stack.push(operand1 - operand2); break;
+                case '*': stack.push(operand1 * operand2); break;
+                case '/': stack.push(operand1 / operand2); break;
+            }
+        }
+    }
+
+    return stack.top();
+}
+
+int evaluatePrefix(const std::string& expression) {
+    std::stack<int> stack;
+    std::istringstream iss(expression);
+
+    // Reverse the expression for easier processing
+    std::string reversedExpression = "";
+    while (iss >> std::ws) {
+        reversedExpression = static_cast<char>(iss.get()) + reversedExpression;
+    }
+
+    iss.clear(); // Clear the end-of-file flag
+    iss.str(reversedExpression); // Set the reversed expression as the new input
+
+    while (iss >> std::ws) {
+        if (isdigit(iss.peek()) || (iss.peek() == '-' && isdigit(iss.peek()))) {
+            int num;
+            iss >> num;
+            stack.push(num);
+        } else {
+            char op = iss.get();
+            int operand1 = stack.top(); stack.pop();
+            int operand2 = stack.top(); stack.pop();
+
+            switch (op) {
+                case '+': stack.push(operand1 + operand2); break;
+                case '-': stack.push(operand1 - operand2); break;
+                case '*': stack.push(operand1 * operand2); break;
+                case '/': stack.push(operand1 / operand2); break;
+            }
+        }
+    }
+
+    return stack.top();
+}
+
+int main() {
+    std::string expression, notation;
+    
+    std::cout << "Enter expression: ";
+    std::cin >> expression;
+    
+    std::cout << "Enter notation (postfix or prefix): ";
+    std::cin >> notation;
+
+    if (notation == "postfix") {
+        std::cout << "Result: " << evaluatePostfix(expression) << std::endl;
+    } else if (notation == "prefix") {
+        std::cout << "Result: " << evaluatePrefix(expression) << std::endl;
+    } else {
+        std::cout << "Invalid notation. Use 'postfix' or 'prefix'." << std::endl;
+    }
+
+    return 0;
+}
