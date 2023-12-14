@@ -1,0 +1,131 @@
+#include <iostream>
+#include <algorithm>
+
+class AVLNode {
+public:
+    int data;
+    AVLNode* left;
+    AVLNode* right;
+    int height;
+
+    AVLNode(int value) : data(value), left(nullptr), right(nullptr), height(1) {}
+};
+
+class AVLTree {
+private:
+    AVLNode* root;
+
+    int getHeight(AVLNode* node) {
+        return (node != nullptr) ? node->height : 0;
+    }
+
+    int getBalanceFactor(AVLNode* node) {
+        return (node != nullptr) ? getHeight(node->left) - getHeight(node->right) : 0;
+    }
+
+    AVLNode* rightRotate(AVLNode* y) {
+        AVLNode* x = y->left;
+        AVLNode* T2 = x->right;
+
+        x->right = y;
+        y->left = T2;
+
+        y->height = std::max(getHeight(y->left), getHeight(y->right)) + 1;
+        x->height = std::max(getHeight(x->left), getHeight(x->right)) + 1;
+
+        return x;
+    }
+
+    AVLNode* leftRotate(AVLNode* x) {
+        AVLNode* y = x->right;
+        AVLNode* T2 = y->left;
+
+        y->left = x;
+        x->right = T2;
+
+        x->height = std::max(getHeight(x->left), getHeight(x->right)) + 1;
+        y->height = std::max(getHeight(y->left), getHeight(y->right)) + 1;
+
+        return y;
+    }
+
+    AVLNode* insert(AVLNode* node, int value) {
+        if (node == nullptr) {
+            return new AVLNode(value);
+        }
+
+        if (value < node->data) {
+            node->left = insert(node->left, value);
+        } else if (value > node->data) {
+            node->right = insert(node->right, value);
+        } else {
+            return node; // Duplicate values are not allowed
+        }
+
+        node->height = 1 + std::max(getHeight(node->left), getHeight(node->right));
+
+        int balance = getBalanceFactor(node);
+
+        // Left Left Case
+        if (balance > 1 && value < node->left->data) {
+            return rightRotate(node);
+        }
+
+        // Right Right Case
+        if (balance < -1 && value > node->right->data) {
+            return leftRotate(node);
+        }
+
+        // Left Right Case
+        if (balance > 1 && value > node->left->data) {
+            node->left = leftRotate(node->left);
+            return rightRotate(node);
+        }
+
+        // Right Left Case
+        if (balance < -1 && value < node->right->data) {
+            node->right = rightRotate(node->right);
+            return leftRotate(node);
+        }
+
+        return node;
+    }
+
+    AVLNode* search(AVLNode* root, int value) {
+        if (root == nullptr || root->data == value) {
+            return root;
+        }
+
+        if (value < root->data) {
+            return search(root->left, value);
+        }
+
+        return search(root->right, value);
+    }
+
+public:
+    AVLTree() : root(nullptr) {}
+
+    void insert(int value) {
+        root = insert(root, value);
+    }
+
+    bool search(int value) {
+        return search(root, value) != nullptr;
+    }
+};
+
+int main() {
+    AVLTree avl;
+
+    avl.insert(10);
+    avl.insert(20);
+    avl.insert(30);
+    avl.insert(40);
+    avl.insert(50);
+
+    std::cout << "Search 30: " << (avl.search(30) ? "Found" : "Not found") << std::endl;
+    std::cout << "Search 60: " << (avl.search(60) ? "Found" : "Not found") << std::endl;
+
+    return 0;
+}
