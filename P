@@ -1,0 +1,248 @@
+#Optimal Solution Using Line Search Method 
+
+import numpy as np
+
+from scipy.optimize import minimize_scalar
+
+def objective_function(x):
+
+ return (x-0.5)**2
+
+def line_search_optimization():
+
+ #define the starting point
+
+ x0=1.0
+
+ #perform the line search optimization
+
+ result=minimize_scalar(objective_function, method="brent")
+
+ #summarize the result
+
+ print("Status: %s" % result["message"])
+
+ print("Total Evaluations: %d" % result["nfev"])
+
+ print("Optimal Solution: x=%.3f" % result["x"])
+
+ print("Objective Function Value: f(x)=%.3f" % result["fun"])
+
+line_search_optimization()
+
+OUTPUT:
+
+Status: 
+
+Optimization terminated successfully;
+
+The returned value satisfies the termination criteria
+
+(using xtol = 1.48e-08 )
+
+Total Evaluations: 8
+
+Optimal Solution: x=0.500
+
+Objective Function Value: f(x)=0.000
+
+#Solve LPP Grapically
+
+import matplotlib.pyplot as plt
+
+import numpy as np
+
+#Define constraint equation
+
+x=np.linespace(0,10,1000)
+
+y1=(6-2*x)/3
+
+y2=(9-3*x)/2
+
+#Plot constraint lines
+
+plt.plot(x,y1,label='2x+3y<=6')
+
+plt.plot(x,y2,label='3x+2y<=9')
+
+#Shade feasible region
+
+y3=np.maximum(y1,y2)
+
+plt.fill_between(x,y3,0,where=(x>=0)& (y1>=0) & (y2>=0), alpha=0.2)
+
+#define objective function
+
+z=lambda x,y:5*x+4*y
+
+#Evaluate objective function at corner points
+
+corners=[(0,0),(0,3),(1.8,1.2),(3,0)]
+
+values=[z(*corner) for corner in corners]
+#Plot corner points and optimal solution
+
+plt.scatter(*zip(*corners))
+
+pli.another('Optimal Solution: ',{max(values)},corners[values.index(max(values))])
+
+#Add labels and legend
+
+plt.xlabel('x')
+
+plt.ylabel('y')
+
+plt.title('Graphical Solution of LPP')
+
+plt.legend()
+
+#Show plot
+
+plt.show()
+
+#Compute Gradient and Hessian
+
+import numpy as np
+
+def gradient(x):
+
+ return np.array(
+
+ [400*x[0]*(x[0]**2-x[1])-2*(1-x[0]),200*(x[1]-x[0]**2)]
+
+ )
+
+def hessian(x):
+
+ return np.array(
+
+ [[1200*x[0]**2-400*x[1]+2,-400*x[0]],[-400*x[0],200]]
+
+ )
+
+#test the functions
+
+x=np.array([1,1])
+
+print("Gradient at x ={}:{}".format(x,gradient(x)))
+
+print("Hessian at x ={}:{}".format(x,hessian(x)))
+
+OUTPUT:
+
+Gradient at x =[1 1]:[0 0]
+
+Hessian at x =[1 1]:[[ 802 -400]
+
+[-400 200]]
+
+#Global Optimal Solution of Function
+
+import numpy as np
+
+from scipy.optimize import minimize_scalar
+
+def f(x):
+
+ return -10*np.cos(np.pi*x-2.2)+(x+1.5)*x
+
+res=minimize_scalar(f, bounds=(-10,10),method='bounded')
+
+print(f'The global optimal solution of f(x) is {res.x:.4f} with value of {res.fun:.4f}')
+
+OUTPUT:
+
+The global optimal solution of f(x) is 0.6714 with value of -8.5010
+#Global Optimal solution of function graphically
+
+import numpy as np
+
+import matplotlib.pyplot as plt
+
+def f(x):
+
+ return -10*np.cos(np.pi*x-2.2)+(x+1.5)*x
+
+#Define range of x values
+
+x=np.linspace(-5,5,1000)
+
+#plot the function 
+
+plt.plot(x,f(x))
+
+#Find global minimum
+
+global_min=np.min(f(x))
+
+global_min_x=x[np.argmin(f(x))]
+
+plt.plot(global_min_x,global_min,"ro")
+
+#Add label and title 
+
+plt.xlabel("x")
+
+plt.ylabel("f(x)")
+
+plt.title("Graphical Optimal Solution of f(x)")
+
+plt.show()
+
+#solve constraint optimization problem
+
+from scipy.optimize import minimize
+
+def objective(x):
+
+ return -2*x[0]-2*x[1]-3*x[2]
+
+def constraint1(x):
+
+ return 50-2*x[0]-7*x[1]-3*x[2]
+
+def constraint2(x):
+
+ return 45-3*x[0]+5*x[1]-7*x[2]
+
+def constraint3(x):
+
+ return 37-5*x[0]-2*x[1]+6*x[2]
+
+x0=[0,0,0]
+
+b=(0.0,None)
+
+bnds=(b,b,b)
+
+con1={"type":"ineq","fun":constraint1}
+
+con2={"type":"ineq","fun":constraint2}
+
+con3={"type":"ineq","fun":constraint3}
+
+cons=[con1,con2,con3]
+
+sol=minimize(objective,x0,method="SLSQP",bounds=bnds,constraints=cons)
+print(sol)
+
+OUTPUT:
+
+message: Optimization terminated successfully
+
+success: True
+
+ status: 0
+
+ fun: -37.39919354839645
+
+ x: [ 1.074e+01 2.520e+00 3.625e+00]
+
+ nit: 6
+
+ jac: [-2.000e+00 -2.000e+00 -3.000e+00]
+
+ nfev: 24
+
+ njev: 6
